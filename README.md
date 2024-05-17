@@ -1,2 +1,3 @@
-# autonews
-AI-based automatic newsletter generatioㅜ
+# AutoNews
+
+AI-based automatic newsletter generation
