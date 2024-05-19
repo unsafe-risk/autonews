@@ -35,19 +35,26 @@ func main() {
 	fmt.Println()
 	fmt.Printf("Crawling %s...\n", url)
 
-	an := autonews.NewAutoNews(generativelanguage.NewModel(client, "gemini-1.5-pro-latest", nil))
+	an := autonews.NewAutoNews(generativelanguage.NewModel(client, "gemini-1.5-flash-latest", nil))
 
-	summary, err := an.GetSummary(context.Background(), strings.TrimSpace(url))
+	title, summary, err := an.GeneratePost(context.Background(), strings.TrimSpace(url))
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "getting summary:", err)
 		os.Exit(1)
 	}
 
-	fmt.Println("SUMMARY:")
-	fmt.Println(summary)
+	var sb strings.Builder
+
+	sb.WriteString("# ")
+	sb.WriteString(fmt.Sprintf("[%s](%s)", title, url))
+	sb.WriteString("\n\n")
+	sb.WriteString(summary)
+
+	fmt.Println("POST:")
+	fmt.Println(sb.String())
 
 	fmt.Println("Translating...")
-	translated, err := an.Translate(context.Background(), summary)
+	translated, err := an.Translate(context.Background(), sb.String())
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "translating:", err)
 		os.Exit(1)

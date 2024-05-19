@@ -47,7 +47,7 @@ func (g *AutoNews) Crawl(ctx context.Context, url string) (html string, err erro
 	return
 }
 
-func (g *AutoNews) GetSummary(ctx context.Context, url string) (summary string, err error) {
+func (g *AutoNews) GeneratePost(ctx context.Context, url string) (title string, summary string, err error) {
 	orightml, err := g.Crawl(ctx, url)
 	if err != nil {
 		return
@@ -66,10 +66,25 @@ func (g *AutoNews) GetSummary(ctx context.Context, url string) (summary string, 
 	}
 
 	summary, err = generateSummary(ctx, g.model, sb.String())
+	if err != nil {
+		return
+	}
+
+	title, err = generateTitle(ctx, g.model, sb.String())
 	return
 }
 
 func (g *AutoNews) Translate(ctx context.Context, text string) (translated string, err error) {
 	translated, err = generateTranslation(ctx, g.model, text)
+	return
+}
+
+func (g *AutoNews) Title(ctx context.Context, text string) (title string, err error) {
+	title, err = generateTitle(ctx, g.model, text)
+	return
+}
+
+func (g *AutoNews) NewsTitle(ctx context.Context, text string) (title string, err error) {
+	title, err = generateNewsTitle(ctx, g.model, text)
 	return
 }

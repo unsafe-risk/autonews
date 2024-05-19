@@ -69,5 +69,10 @@ func generateSummary(ctx context.Context, model llm.LLM, document string) (strin
 		return "", ErrSummaryNotProvided
 	}
 
-	return strings.TrimSpace(summary), nil
+	summary = strings.TrimSpace(summary)
+	summary = strings.ReplaceAll(summary, "\n\n", "\n")
+	summary = strings.ReplaceAll(summary, "\n\n", "\n")
+	summary = strings.ReplaceAll(summary, "\n", "\n\n")
+
+	return summary, nil
 }

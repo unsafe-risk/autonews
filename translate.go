@@ -18,6 +18,7 @@ const translation_prompt = `Translate the document into Korean.
 Always use a friendly and bright tone.
 Do not distort the meaning of the sentence.
 Do not translate names or abbreviations.
+Do not translate yaml keys.
 
 Write the translated content inside the <korean> block.`
 
