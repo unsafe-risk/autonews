@@ -15,9 +15,16 @@ const summary_prompt = `Please carefully read the following document:
 %s
 </document>
 
-After reading, identify the key features and main points covered in the document. 
+After reading, identify the key features and main points covered in the document.
 
-Then, write a friendly 2-paragraph summary of the document that covers those key points.
+Then, write a friendly 3-paragraph summary of the document that covers those key points.
+
+Make your sentences as lively as possible, you can even use exclamation points.
+
+Don't start with "This document is".
+
+Always start your summary by explaining what the project or document does.
+
 The summary should use soft, positive language to convey the essence of the document in an easily understandable way.
 
 Never use string formatting such as Markdown and HTML.
@@ -26,17 +33,13 @@ If there is no appropriate content to summarize or the given document is an erro
 
 Write your summary inside <summary> tags. The summary should be in English.`
 
-func generateSummaryPrompt(document string) string {
-	return fmt.Sprintf(summary_prompt, document)
-}
-
 var ErrSummaryNotProvided = errors.New("summary not provided")
 
 func generateSummary(ctx context.Context, model llm.LLM, document string) (string, error) {
 	response := model.GenerateStream(ctx, &llm.ChatContext{}, &llm.Content{
 		Role: llm.RoleModel,
 		Parts: []llm.Segment{
-			llm.Text(generateSummaryPrompt(document)),
+			llm.Text(fmt.Sprintf(summary_prompt, document)),
 		},
 	})
 	for range response.Stream {

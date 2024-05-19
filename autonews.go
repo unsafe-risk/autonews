@@ -68,3 +68,8 @@ func (g *AutoNews) GetSummary(ctx context.Context, url string) (summary string, 
 	summary, err = generateSummary(ctx, g.model, sb.String())
 	return
 }
+
+func (g *AutoNews) Translate(ctx context.Context, text string) (translated string, err error) {
+	translated, err = generateTranslation(ctx, g.model, text)
+	return
+}
