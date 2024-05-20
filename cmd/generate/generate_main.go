@@ -12,6 +12,7 @@ import (
 
 	"github.com/goccy/go-yaml"
 	"github.com/lemon-mint/godotenv"
+	"github.com/lemon-mint/vermittlungsstelle/llm"
 	"github.com/lemon-mint/vermittlungsstelle/llm/generativelanguage"
 	"github.com/unsafe-risk/autonews"
 )
@@ -70,7 +71,9 @@ func main() {
 		panic(err)
 	}
 
-	an := autonews.NewAutoNews(generativelanguage.NewModel(client, "gemini-1.5-flash-latest", nil))
+	an := autonews.NewAutoNews(generativelanguage.NewModel(client, "gemini-1.5-flash-latest", &llm.Config{
+		SafetyFilterThreshold: llm.BlockOnlyHigh,
+	}))
 
 	for _, url := range post.Urls {
 		title, text, err := an.GeneratePost(context.Background(), strings.TrimSpace(url))
@@ -78,6 +81,7 @@ func main() {
 			fmt.Fprintln(os.Stderr, "Error:", err, "URL:", url)
 			os.Exit(1)
 		}
+		fmt.Printf("%s:\n\n%s\n\n", title, text)
 		post.Sections = append(post.Sections, Section{Title: title, Text: text, URL: url})
 	}
 
@@ -97,9 +101,14 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	title = strings.TrimSpace(title)
+	title = mkpath(title)
+	title = strings.ReplaceAll(title, "--", "-")
+	title = strings.ReplaceAll(title, "--", "-")
+	fmt.Println("Title:", title)
 	post.Title = title
 
-	basepath := fmt.Sprintf("articles/%s-%s", timeID(post.Date), mkpath(post.Title))
+	basepath := fmt.Sprintf("articles/%s-%s", timeID(post.Date), post.Title)
 	err = os.MkdirAll(basepath, 0755)
 	if err != nil {
 		panic(err)
@@ -110,7 +119,7 @@ func main() {
 		panic(err)
 	}
 
-	err = os.WriteFile(fmt.Sprintf("%s/post.json", basepath), data, 0644)
+	err = os.WriteFile(fmt.Sprintf("%s/index.json", basepath), data, 0644)
 	if err != nil {
 		panic(err)
 	}
@@ -132,6 +141,7 @@ func main() {
 	postmd.WriteString(string(data))
 	postmd.WriteString("---\n\n")
 	postmd.WriteString(post_body.String())
+	postmd.WriteString("\n")
 
 	post_en := strings.TrimSpace(postmd.String())
 

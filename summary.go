@@ -74,5 +74,16 @@ func generateSummary(ctx context.Context, model llm.LLM, document string) (strin
 	summary = strings.ReplaceAll(summary, "\n\n", "\n")
 	summary = strings.ReplaceAll(summary, "\n", "\n\n")
 
+	lines := strings.Split(summary, "\n")
+	var LinesWithoutEmpty []string
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if len(line) > 0 {
+			LinesWithoutEmpty = append(LinesWithoutEmpty, line)
+		}
+	}
+	summary = strings.Join(LinesWithoutEmpty, "\n\n")
+	summary = strings.TrimSpace(summary)
+
 	return summary, nil
 }
