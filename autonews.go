@@ -38,7 +38,7 @@ func (g *AutoNews) Crawl(ctx context.Context, url string) (html string, err erro
 	}
 	page = page.Context(ctx)
 	page = page.Timeout(time.Second * 30)
-	err = page.WaitDOMStable(time.Second, 1)
+	err = page.WaitDOMStable(time.Second, 0.01)
 	if err != nil {
 		return
 	}

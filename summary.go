@@ -25,6 +25,8 @@ Don't start with "This document is".
 
 Always start your summary by explaining what the project or document does.
 
+Include the insightful points of the document.
+
 The summary should use soft, positive language to convey the essence of the document in an easily understandable way.
 
 Never use string formatting such as Markdown and HTML.
