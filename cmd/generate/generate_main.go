@@ -71,7 +71,8 @@ func main() {
 		panic(err)
 	}
 
-	an := autonews.NewAutoNews(generativelanguage.NewModel(client, "gemini-1.5-flash-latest", &llm.Config{
+	t := time.NewTicker(time.Second * 62)
+	an := autonews.NewAutoNews(generativelanguage.NewModel(client, "gemini-1.5-pro-latest", &llm.Config{
 		SafetyFilterThreshold: llm.BlockOnlyHigh,
 	}))
 
@@ -83,6 +84,7 @@ func main() {
 		}
 		fmt.Printf("%s:\n\n%s\n\n", title, text)
 		post.Sections = append(post.Sections, Section{Title: title, Text: text, URL: url})
+		<-t.C
 	}
 
 	var post_body strings.Builder
