@@ -6,7 +6,7 @@ require (
 	github.com/go-rod/rod v0.116.0
 	github.com/goccy/go-yaml v1.11.3
 	github.com/lemon-mint/godotenv v1.0.3
-	github.com/lemon-mint/vermittlungsstelle v0.0.0-20240517035342-eae6bfb30f64
+	github.com/lemon-mint/vermittlungsstelle 73c7f00bf678
 	golang.org/x/net v0.25.0
 )
 
