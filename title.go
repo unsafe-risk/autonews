@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/lemon-mint/vermittlungsstelle/llm"
+	"github.com/lemon-mint/coord/llm"
 )
 
 const title_prompt = `Please carefully read the following document:
@@ -30,17 +30,15 @@ Write the title within the <title> tag. The title must be written in English.`
 var ErrTitleFailed = errors.New("title failed")
 
 func generateTitle(ctx context.Context, model llm.LLM, document string) (string, error) {
-	response := model.GenerateStream(ctx, &llm.ChatContext{}, &llm.Content{
-		Role: llm.RoleModel,
-		Parts: []llm.Segment{
-			llm.Text(fmt.Sprintf(title_prompt, document)),
-		},
-	})
-	for range response.Stream {
-	} // Wait for the stream to finish.
+	response := model.GenerateStream(
+		ctx,
+		&llm.ChatContext{},
+		llm.TextContent(llm.RoleUser, fmt.Sprintf(title_prompt, document)),
+	)
 
-	if response.Err != nil {
-		return "", response.Err
+	err := response.Wait()
+	if err != nil {
+		return "", err
 	}
 
 	texts := getTexts(response.Content)

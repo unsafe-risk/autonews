@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/lemon-mint/vermittlungsstelle/llm"
+	"github.com/lemon-mint/coord/llm"
 )
 
 const newstitle_prompt = `Read this newsletter and come up with a different title based on the topic you think your readers will be most interested in!:
@@ -27,17 +27,15 @@ Avoid using string formats like Markdown and HTML.
 Write the title within the <title> tag. The title must be written in English.`
 
 func generateNewsTitle(ctx context.Context, model llm.LLM, document string) (string, error) {
-	response := model.GenerateStream(ctx, &llm.ChatContext{}, &llm.Content{
-		Role: llm.RoleModel,
-		Parts: []llm.Segment{
-			llm.Text(fmt.Sprintf(newstitle_prompt, document)),
-		},
-	})
-	for range response.Stream {
-	} // Wait for the stream to finish.
+	response := model.GenerateStream(
+		ctx,
+		&llm.ChatContext{},
+		llm.TextContent(llm.RoleUser, fmt.Sprintf(newstitle_prompt, document)),
+	)
 
-	if response.Err != nil {
-		return "", response.Err
+	err := response.Wait()
+	if err != nil {
+		return "", err
 	}
 
 	texts := getTexts(response.Content)

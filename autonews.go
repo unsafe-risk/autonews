@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/proto"
-	"github.com/lemon-mint/vermittlungsstelle/llm"
+	"github.com/lemon-mint/coord/llm"
 	"golang.org/x/net/html"
 )
 

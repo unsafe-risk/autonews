@@ -11,10 +11,10 @@ import (
 	"time"
 
 	"github.com/goccy/go-yaml"
-	"github.com/lemon-mint/godotenv"
-	"github.com/lemon-mint/vermittlungsstelle/llm"
-	"github.com/lemon-mint/vermittlungsstelle/llm/generativelanguage"
+	"github.com/lemon-mint/coord/pconf"
+	"github.com/lemon-mint/coord/provider/aistudio"
 	"github.com/unsafe-risk/autonews"
+	"gopkg.eu.org/envloader"
 )
 
 type Section struct {
@@ -50,8 +50,12 @@ func timeID(t time.Time) string {
 }
 
 func main() {
-	godotenv.Load()
-	client, err := generativelanguage.NewClient(context.Background(), os.Getenv("GEMINI_API_KEY"))
+	err := envloader.LoadEnvFile(".env")
+	if err != nil {
+		panic(err)
+	}
+
+	client, err := aistudio.Provider.NewLLMClient(context.Background(), pconf.WithAPIKey(os.Getenv("AISTUDIO_API_KEY")))
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "creating client:", err)
 		os.Exit(1)
@@ -72,9 +76,13 @@ func main() {
 	}
 
 	t := time.NewTicker(time.Second * 62)
-	an := autonews.NewAutoNews(generativelanguage.NewModel(client, "gemini-1.5-pro-latest", &llm.Config{
-		SafetyFilterThreshold: llm.BlockOnlyHigh,
-	}))
+
+	model, err := client.NewLLM("gemini-1.5-pro-latest", nil)
+	if err != nil {
+		panic(err)
+	}
+
+	an := autonews.NewAutoNews(model)
 
 	for _, url := range post.Urls {
 		title, text, err := an.GeneratePost(context.Background(), strings.TrimSpace(url))

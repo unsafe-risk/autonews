@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/lemon-mint/vermittlungsstelle/llm"
+	"github.com/lemon-mint/coord/llm"
 )
 
 const translation_prompt = `Translate the document into Korean.
@@ -25,17 +25,15 @@ Write the translated content inside the <korean> block.`
 var ErrTranslationFailed = errors.New("translation failed")
 
 func generateTranslation(ctx context.Context, model llm.LLM, document string) (string, error) {
-	response := model.GenerateStream(ctx, &llm.ChatContext{}, &llm.Content{
-		Role: llm.RoleModel,
-		Parts: []llm.Segment{
-			llm.Text(fmt.Sprintf(translation_prompt, document)),
-		},
-	})
-	for range response.Stream {
-	} // Wait for the stream to finish.
+	response := model.GenerateStream(
+		ctx,
+		&llm.ChatContext{},
+		llm.TextContent(llm.RoleUser, fmt.Sprintf(translation_prompt, document)),
+	)
 
-	if response.Err != nil {
-		return "", response.Err
+	err := response.Wait()
+	if err != nil {
+		return "", err
 	}
 
 	texts := getTexts(response.Content)

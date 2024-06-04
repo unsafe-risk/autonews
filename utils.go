@@ -1,6 +1,6 @@
 package autonews
 
-import "github.com/lemon-mint/vermittlungsstelle/llm"
+import "github.com/lemon-mint/coord/llm"
 
 func getTexts(c *llm.Content) []string {
 	var texts []string

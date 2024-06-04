@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/lemon-mint/vermittlungsstelle/llm"
+	"github.com/lemon-mint/coord/llm"
 )
 
 const summary_prompt = `Please carefully read the following document:
@@ -38,17 +38,15 @@ Write your summary inside <summary> tags. The summary should be in English.`
 var ErrSummaryNotProvided = errors.New("summary not provided")
 
 func generateSummary(ctx context.Context, model llm.LLM, document string) (string, error) {
-	response := model.GenerateStream(ctx, &llm.ChatContext{}, &llm.Content{
-		Role: llm.RoleModel,
-		Parts: []llm.Segment{
-			llm.Text(fmt.Sprintf(summary_prompt, document)),
-		},
-	})
-	for range response.Stream {
-	} // Wait for the stream to finish.
+	response := model.GenerateStream(
+		ctx,
+		&llm.ChatContext{},
+		llm.TextContent(llm.RoleUser, fmt.Sprintf(summary_prompt, document)),
+	)
 
-	if response.Err != nil {
-		return "", response.Err
+	err := response.Wait()
+	if err != nil {
+		return "", err
 	}
 
 	texts := getTexts(response.Content)
