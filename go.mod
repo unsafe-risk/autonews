@@ -3,7 +3,7 @@ module github.com/unsafe-risk/autonews
 go 1.22.2
 
 require (
-	github.com/go-rod/rod v0.116.0
+	github.com/go-rod/rod v0.116.1
 	github.com/goccy/go-yaml v1.11.3
 	github.com/lemon-mint/coord v0.0.0-20240604052653-7b674ab06752
 	golang.org/x/net v0.25.0
@@ -32,7 +32,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/ysmood/fetchup v0.2.4 // indirect
 	github.com/ysmood/goob v0.4.0 // indirect
-	github.com/ysmood/got v0.39.5 // indirect
+	github.com/ysmood/got v0.40.0 // indirect
 	github.com/ysmood/gson v0.7.3 // indirect
 	github.com/ysmood/leakless v0.8.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
