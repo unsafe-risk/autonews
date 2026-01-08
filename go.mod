@@ -4,7 +4,7 @@ go 1.22.2
 
 require (
 	github.com/go-rod/rod v0.116.0
-	github.com/goccy/go-yaml v1.11.3
+	github.com/goccy/go-yaml v1.19.2
 	github.com/lemon-mint/coord v0.0.0-20240604052653-7b674ab06752
 	golang.org/x/net v0.25.0
 	gopkg.eu.org/envloader v1.1.0
